@@ -11,9 +11,9 @@ class DatabaseConnect {
     mongoose.set('strictQuery', false)
   }
 
-  async connect(mongoUri: string, databaseName: string) {
+  async connect(mongoUri: string) {
     try {
-      await mongoose.connect(mongoUri + '/' + databaseName)
+      await mongoose.connect(mongoUri)
       log.info('Mongoose DB connected')
     } catch (error: any) {
       log.error('Could not connect to Mongoose db' + error.message)
