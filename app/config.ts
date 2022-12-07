@@ -9,6 +9,7 @@ const options = {
   storageService: 'mongoose',
   mongoUri: process.env.MONGO_URI,
   databaseName: process.env.DATABASE_NAME,
+  notificationPath: __dirname + 'notification.txt',  
 }
 
 export default options

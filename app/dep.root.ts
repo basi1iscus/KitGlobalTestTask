@@ -12,6 +12,8 @@ import { IUserDBService } from './interface/user.interface'
 import { IDoctorDBService } from './interface/doctor.interface'
 import { IAppointmentDBService } from './interface/appointment.interface'
 
+import { FSNotificationService } from './service/notification/fs.notification'
+
 export let userController: UserController
 export let doctorController: DoctorController
 export let appointmentController: AppointmentsController
@@ -35,4 +37,8 @@ export async function createDependencies(config: any) {
         }
     }
 
+    if (config.notificationPath) {
+        const notification = new FSNotificationService(config.notificationPath)
+        userController.notificationService = notification
+    }
 }
