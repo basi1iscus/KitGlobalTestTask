@@ -1,5 +1,6 @@
 import { IDoctor, Doctor } from '../model/doctor.model'
 import { IDoctorDBService } from '../interface/doctor.interface'
+import { IAppointment } from '../model/appointment.model'
 
 interface controllerResponce {
   success: boolean,
@@ -23,9 +24,9 @@ class DoctorController {
     }
   }
 
-  async getListHandler() {
+  async getListHandler(query: object = {}) {
     try {
-      const dbResponce:IDoctor[] = await this.storageService.getList()
+      const dbResponce:IDoctor[] = await this.storageService.getList(query)
       return { success: true, data: dbResponce.map((doctor) => {
         return doctor
       }) }
@@ -76,10 +77,13 @@ class DoctorController {
     }
   }
 
-  async addAppointment(id: string, appointmentId: string) {
+  async addAppointment(id: string, appointment: IAppointment) {
 
     try {
-      const dbResponce:IDoctor | null = await this.storageService.addAppointment(id, appointmentId)
+      if (!appointment.id) {
+        return { success: false, error: 'Appointment with empty id' }
+      }
+      const dbResponce:IDoctor | null = await this.storageService.addAppointment(id, appointment.id)
       if (!dbResponce) {
         return { success: false, error: 'Doctor not found' }
       }
