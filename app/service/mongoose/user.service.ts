@@ -4,7 +4,7 @@ import { IUser, User } from '../../model/user.model'
 import { IUserDBService } from '../../interface/user.interface'
 
 const UserSchema = new mongoose.Schema( {
-    _id: { type: String, default: v4 },
+    _id: { type: String, default: v4, alias: 'id' },
     email: {
       type: String,
       required: true,
@@ -16,15 +16,6 @@ const UserSchema = new mongoose.Schema( {
     name: { type: String, required: true },
     type: { type: String },
     appointments: [ {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Appointments'} ]
-  },
-  {
-    virtuals: {
-      id: {
-        get() {
-          return this._id.toString()
-        }
-      }
-    }
   }
 )
 
@@ -73,7 +64,7 @@ class UserMongodbService implements IUserDBService {
   
   async addAppointment(id: string, appointmentId: string): Promise<User | null> {
     return this.UserModel
-      .findOneAndUpdate({ _id: id, appointments: { $elemMatch: appointmentId }}, { $push: { appointments: appointmentId } }, { returnDocument: 'after' })
+      .findOneAndUpdate({ _id: id, appointments: {$nin: [appointmentId]} }, { $push: { appointments: appointmentId } }, { returnDocument: 'after' })
       .then((data) => data ? new User(data.toJSON({ virtuals: true })) : null )
       .catch((error) => { throw Error(String(error.errmsg)) })
   }

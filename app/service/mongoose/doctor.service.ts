@@ -4,7 +4,7 @@ import { IDoctor, Doctor } from '../../model/doctor.model'
 import { IDoctorDBService } from '../../interface/doctor.interface'
 
 const DoctorSchema = new mongoose.Schema( {
-    _id: { type: String, default: v4 },
+    _id: { type: String, default: v4, alias: 'id' },
     email: {
       type: String,
       required: true,
@@ -18,17 +18,7 @@ const DoctorSchema = new mongoose.Schema( {
     spec: { type: String },
     free: { type: Boolean },
     appointments_accepted: [ {type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Appointments'} ]
-  },
-  {
-    virtuals: {
-      id: {
-        get() {
-          return this._id.toString()
-        }
-      }
-    }
-  }
-)
+  })
 
 class DoctorMongodbService implements IDoctorDBService {
   DoctorModel = mongoose.model("Doctors", DoctorSchema);
@@ -75,7 +65,7 @@ class DoctorMongodbService implements IDoctorDBService {
 
   async addAppointment(id: string, appointmentId: string): Promise<Doctor | null> {
     return this.DoctorModel
-      .findOneAndUpdate({ _id: id, appointments_accepted: { $elemMatch: appointmentId }}, { $push: { appointments_accepted: appointmentId } }, { returnDocument: 'after' })
+      .findOneAndUpdate({ _id: id, appointments_accepted:  {$nin: [appointmentId]} }, { $push: { appointments_accepted: appointmentId } }, { returnDocument: 'after' })
       .then((data) => data ? new Doctor(data.toJSON({ virtuals: true })) : null )
       .catch((error) => { throw Error(String(error.errmsg)) })
   }

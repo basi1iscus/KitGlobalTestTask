@@ -3,24 +3,15 @@ import { IAppointment, Appointment } from '../../model/appointment.model'
 import { IAppointmentDBService } from '../../interface/appointment.interface'
 
 const AppointmentSchema = new mongoose.Schema( {
+    _id: { type: mongoose.Schema.Types.ObjectId, alias: 'id' },
     date: {
       type: Date,
-      required: true
+      required: true,
     },
     user: {type: String, required: true, ref: 'User'},
     doctor: {type: String, required: true, ref: 'Doctor'},
     active: { type: Boolean }
-  },
-  {
-    virtuals: {
-      id: {
-        get() {
-          return this._id.toString()
-        }
-      }
-    }
-  }
-)
+  })
 
 class AppointmentMongodbService implements IAppointmentDBService {
   AppointmentModel = mongoose.model("Appointments", AppointmentSchema);
