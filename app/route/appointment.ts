@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction }  from 'express'
 
 import validateSchema from '../middleware/validator'
 import { appointmentSchema } from '../schema/appointment.schema'
-import { appointmentController } from '../dep.root'
+import { appointmentController } from '../dependency.root'
 
 import checkResponce from '../utils/checkresponce'
 

@@ -21,6 +21,7 @@
     "jsonschema": "^1.4.1",
     "mongoose": "^6.8.0",
     "node-schedule": "^2.1.0",
+    "pino": "^8.7.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

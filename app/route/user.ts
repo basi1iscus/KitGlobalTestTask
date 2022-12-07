@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction }  from 'express'
 import { validate as uuidValidate } from 'uuid'
 import validateSchema from '../middleware/validator'
 import { userSchema } from '../schema/user.schema'
-import { userController } from '../dep.root'
+import { userController } from '../dependency.root'
 
 import checkResponce from '../utils/checkresponce'
 

@@ -3,7 +3,7 @@ import { validate as uuidValidate } from 'uuid'
 
 import validateSchema from '../middleware/validator'
 import { doctorSchema } from '../schema/doctor.schema'
-import { doctorController } from '../dep.root'
+import { doctorController } from '../dependency.root'
 
 import checkResponce from '../utils/checkresponce'
 

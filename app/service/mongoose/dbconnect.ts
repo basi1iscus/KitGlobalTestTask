@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { log } from '../../dependency.root'
 
 class DatabaseConnect {
   static _instance: DatabaseConnect
@@ -13,9 +14,9 @@ class DatabaseConnect {
   async connect(mongoUri:string, databaseName:string) {
     try {
       await mongoose.connect(mongoUri + '/' + databaseName)
-      console.log('Mongoose DB connected')
-    } catch (error) {
-      console.error('Could not connect to Mongoose db', error)
+      log.info('Mongoose DB connected')
+    } catch (error: any) {
+      log.error('Could not connect to Mongoose db' + error.message)
       process.exit(1)
     }
   }

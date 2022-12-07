@@ -5,8 +5,8 @@ import { IAppointment, Appointment } from '../model/appointment.model'
 import { IUserDBService } from '../interface/user.interface'
 import { INotificationService } from '../interface/notification.interface'
 import { IDoctor } from '../model/doctor.model'
-import { appointmentController } from '../dep.root'
-import { doctorController } from '../dep.root'
+import { appointmentController } from '../dependency.root'
+import { doctorController } from '../dependency.root'
 
 interface controllerResponce {
   success: boolean,
@@ -116,19 +116,19 @@ class UserController {
         user = (await this.getHandler({ id: appointment.user})).data
       }
 
-      let notificationDate = dayjs((<Appointment>appointment).date).add(1, 'day').toDate()
+      let notificationDate = dayjs((<Appointment>appointment).date).add(-1, 'day').toDate()
       if (notificationDate > new Date()) {
         this.notificationService.addNotification(
             notificationDate,
             <User>user,
-            `${notificationDate} | Привет ${user?.name}! Напоминаем что вы записаны к ${doctor?.spec} завтра в ${dayjs((<Appointment>appointment).date).format('DD/MM/YYYY HH:mm')}!`)
+            `${dayjs(notificationDate).format('DD/MM/YYYY HH:mm')} | Привет ${user?.name}! Напоминаем что вы записаны к ${doctor?.spec} завтра в ${dayjs((<Appointment>appointment).date).format('HH:mm')}!`)
       }
-      notificationDate = dayjs((<Appointment>appointment).date).add(2, 'hours').toDate()
+      notificationDate = dayjs((<Appointment>appointment).date).add(-2, 'hours').toDate()
       if (notificationDate > new Date()) {
         this.notificationService.addNotification(
           notificationDate,
           <User>user,
-          `${notificationDate} | Привет ${user?.name}! Вам через 2 часа к ${doctor?.spec} в ${dayjs((<Appointment>appointment).date).format('HH:mm')}!`)
+          `${dayjs(notificationDate).format('DD/MM/YYYY HH:mm')} | Привет ${user?.name}! Вам через 2 часа к ${doctor?.spec} в ${dayjs((<Appointment>appointment).date).format('HH:mm')}!`)
         }
       }
   }

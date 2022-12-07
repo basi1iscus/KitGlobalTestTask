@@ -2,8 +2,8 @@ import dayjs from 'dayjs'
 
 import { IAppointment, Appointment } from '../model/appointment.model'
 import { IAppointmentDBService } from '../interface/appointment.interface'
-import { doctorController } from '../dep.root'
-import { userController } from '../dep.root'
+import { doctorController } from '../dependency.root'
+import { userController } from '../dependency.root'
 import { Doctor } from '../model/doctor.model'
 import { User } from '../model/user.model'
 
@@ -99,6 +99,10 @@ class AppointmentController {
   async acceptAppointment(params: any, body: any) {
     const { id } = params
     try {
+      const result = await doctorController.getListHandler({ appointments_accepted: id })
+      if (result.success && (result.data?.length)) {
+        return { success: false, error: 'Appointment already accepted'}  
+      }
       const appointment:IAppointment | null = await this.storageService.get(id)
       if (!appointment) {
         return { success: false, error: 'Appointment not found' }

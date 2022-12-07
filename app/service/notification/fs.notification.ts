@@ -14,7 +14,7 @@ export class FSNotificationService implements INotificationService {
         const job = schedule.scheduleJob(date, () => {
             fs.appendFile(
                 this.filename,
-                message,
+                message + '\n',
                 { encoding: 'utf8' }
             )
         })
