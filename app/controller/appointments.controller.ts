@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+
 import { IAppointment, Appointment } from '../model/appointment.model'
 import { IAppointmentDBService } from '../interface/appointment.interface'
 import { doctorController } from '../dep.root'
@@ -6,13 +7,13 @@ import { userController } from '../dep.root'
 import { Doctor } from '../model/doctor.model'
 import { User } from '../model/user.model'
 
+const MAX_APPOINMETS_PER_DAY = 3
+
 interface controllerResponce {
   success: boolean,
   data?: Object,
   error?: string
 }
-
-const MAX_APPOINMETS_PER_DAY = 3
 
 class AppointmentController {
   storageService: IAppointmentDBService  
@@ -42,9 +43,9 @@ class AppointmentController {
     }
   }
 
-  async getListHandler() {
+  async getListHandler(query: object = {}) {
     try {
-      const dbResponce:IAppointment[] = await this.storageService.getList()
+      const dbResponce:IAppointment[] = await this.storageService.getList(query)
       return { success: true, data: dbResponce.map((appointment) => {
         return appointment
       }) }
@@ -103,12 +104,12 @@ class AppointmentController {
         return { success: false, error: 'Appointment not found' }
       }
       if (appointment.doctor) {
-        await doctorController.addAppointment(appointment.doctor instanceof Doctor ? appointment.doctor.id : appointment.doctor, id)
+        await doctorController.addAppointment(appointment.doctor instanceof Doctor ? appointment.doctor.id : appointment.doctor, appointment)
       }
       if (appointment.user) {
-        await userController.addAppointment(appointment.user instanceof User ? appointment.user.id : appointment.user, id)
+        await userController.addAppointment(appointment.user instanceof User ? appointment.user.id : appointment.user, appointment)
       }
-      if (+(appointment.date ?? 0) > +Date.now) {
+      if (+(appointment.date ?? 0) > +Date.now()) {
         const dbResponce:IAppointment | null = await this.storageService.update(id, { active: true })
         return { success: true, data: dbResponce }
       }
@@ -121,6 +122,10 @@ class AppointmentController {
   async rejectAppointment(params: any, body: any) {
     const { id } = params
     try {
+      const result = await doctorController.getListHandler({ appointments_accepted: id })
+      if (result.success && (result.data?.length)) {
+        return { success: false, error: 'Appointment already accepted'}  
+      }
       const dbResponce:controllerResponce = await this.deleteHandler({ id })
       return dbResponce
     } catch (error: any) {
