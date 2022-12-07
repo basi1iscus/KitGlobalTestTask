@@ -4,7 +4,7 @@ import { IDoctor, Doctor } from '../../model/doctor.model'
 import { IDoctorDBService } from '../../interface/doctor.interface'
 
 const DoctorSchema = new mongoose.Schema({
-  _id: { type: String, default: v4, alias: 'id' },
+  _id: { type: String, required: true, default: v4 },
   email: {
     type: String,
     required: true,

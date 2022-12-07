@@ -4,7 +4,7 @@ import { IUser, User } from '../../model/user.model'
 import { IUserDBService } from '../../interface/user.interface'
 
 const UserSchema = new mongoose.Schema({
-  _id: { type: String, default: v4, alias: 'id' },
+  _id: { type: String, required: true, default: v4 },
   email: {
     type: String,
     required: true,
