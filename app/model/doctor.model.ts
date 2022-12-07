@@ -13,27 +13,27 @@ export interface IDoctor {
   appointments_accepted?: Appointment[]
 }
 
-export class Doctor implements IDoctor{
-  id: string = ''
-  email: string = ''
-  reg_token: string = ''
-  photo_avatar: string = ''
-  phone: string = ''
-  name: string = ''
-  type: string = 'doc'
-  spec: string = ''
-  free: boolean = true
+export class Doctor implements IDoctor {
+  id = ''
+  email = ''
+  reg_token = ''
+  photo_avatar = ''
+  phone = ''
+  name = ''
+  type = 'doc'
+  spec = ''
+  free = true
   appointments_accepted: Appointment[] = []
-  
-  constructor (doctorData: IDoctor) {
-    const copyField = < T extends {} > (k: keyof T, target: T, source: T) => {
-      target[k] = source[k];
-    }    
+
+  constructor(doctorData: IDoctor) {
+    const copyField = <T extends object>(k: keyof T, target: T, source: T) => {
+      target[k] = source[k]
+    }
     for (const key in doctorData) {
-      const keyName = key as keyof IDoctor;
+      const keyName = key as keyof IDoctor
       if (keyName in this) {
         copyField(keyName, this, doctorData)
       }
     }
-   }
   }
+}

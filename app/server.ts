@@ -3,7 +3,7 @@ import userRouter from './route/user'
 import appointmentRouter from './route/appointment'
 import doctorRouter from './route/doctor'
 import config from './config'
-import {createDependencies, log} from './dependency.root'
+import { createDependencies, log } from './dependency.root'
 
 function createServer() {
   const app = express()

@@ -8,7 +8,7 @@ const doctorSchema = {
     phone: { type: 'string' },
     name: { type: 'string' },
     lastName: { type: 'string' },
-    spec: { type: 'string' },
+    spec: { type: 'string' }
   },
   required: ['email', 'name', 'spec'],
   additionalProperties: false

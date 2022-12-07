@@ -9,16 +9,16 @@ import { appointmentController } from '../dependency.root'
 import { doctorController } from '../dependency.root'
 
 interface controllerResponce {
-  success: boolean,
-  data?: Object,
+  success: boolean
+  data?: object
   error?: string
 }
 
 class UserController {
-  storageService: IUserDBService 
+  storageService: IUserDBService
   notificationService: INotificationService | null = null
   constructor(storageService: IUserDBService) {
-    this.storageService = storageService;
+    this.storageService = storageService
   }
 
   async createHandler(body: IUser) {
@@ -30,7 +30,7 @@ class UserController {
       return { success: false, error: error.message ?? 'Unknown error' }
     }
   }
-  
+
   async createNotifications() {
     try {
       const filter: object = {
@@ -42,30 +42,33 @@ class UserController {
       const dbResponce = await appointmentController.getListHandler(filter)
       if (dbResponce.success && dbResponce.data) {
         dbResponce.data.forEach((appointment) => {
-            this.createNotificationForAppointment(appointment)
-          })
+          this.createNotificationForAppointment(appointment)
+        })
       }
       return { success: true, data: dbResponce }
     } catch (error: any) {
       return { success: false, error: error.message ?? 'Unknown error' }
     }
   }
-  
+
   async getListHandler(query: object = {}) {
     try {
-      const dbResponce:IUser[] = await this.storageService.getList(query)
-      return { success: true, data: dbResponce.map((user) => {
-        return user
-      }) }
+      const dbResponce: IUser[] = await this.storageService.getList(query)
+      return {
+        success: true,
+        data: dbResponce.map((user) => {
+          return user
+        })
+      }
     } catch (error: any) {
       return { success: false, error: error.message ?? 'Unknown error' }
     }
   }
 
   async getHandler(params: any): Promise<controllerResponce> {
-    const { id }= params
+    const { id } = params
     try {
-      const dbResponce:IUser | null = await this.storageService.get(id)
+      const dbResponce: IUser | null = await this.storageService.get(id)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }
@@ -79,7 +82,7 @@ class UserController {
     const { id } = params
     const userData = new User(body)
     try {
-      const dbResponce:IUser | null = await this.storageService.update(id, userData)
+      const dbResponce: IUser | null = await this.storageService.update(id, userData)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }
@@ -94,7 +97,7 @@ class UserController {
     const input = { ...body }
 
     try {
-      const dbResponce:IUser | null = await this.storageService.update(id, input)
+      const dbResponce: IUser | null = await this.storageService.update(id, input)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }
@@ -104,39 +107,60 @@ class UserController {
     }
   }
 
-  async createNotificationForAppointment(appointment: IAppointment, userParam?: IUser,  doctorParam?: IDoctor): Promise<void> {
+  async createNotificationForAppointment(
+    appointment: IAppointment,
+    userParam?: IUser,
+    doctorParam?: IDoctor
+  ): Promise<void> {
     if (this.notificationService) {
       let user: IUser | undefined = userParam
       let doctor: IDoctor | undefined = doctorParam
 
       if (!doctor) {
-        doctor = (await doctorController.getHandler({ id: appointment.doctor})).data
+        doctor = (await doctorController.getHandler({ id: appointment.doctor })).data
       }
       if (!user) {
-        user = (await this.getHandler({ id: appointment.user})).data
+        user = (await this.getHandler({ id: appointment.user })).data
       }
 
-      let notificationDate = dayjs((<Appointment>appointment).date).add(-1, 'day').toDate()
-      if (notificationDate > new Date()) {
-        this.notificationService.addNotification(
-            notificationDate,
-            <User>user,
-            `${dayjs(notificationDate).format('DD/MM/YYYY HH:mm')} | Привет ${user?.name}! Напоминаем что вы записаны к ${doctor?.spec} завтра в ${dayjs((<Appointment>appointment).date).format('HH:mm')}!`)
-      }
-      notificationDate = dayjs((<Appointment>appointment).date).add(-2, 'hours').toDate()
+      let notificationDate = dayjs((<Appointment>appointment).date)
+        .add(-1, 'day')
+        .toDate()
       if (notificationDate > new Date()) {
         this.notificationService.addNotification(
           notificationDate,
           <User>user,
-          `${dayjs(notificationDate).format('DD/MM/YYYY HH:mm')} | Привет ${user?.name}! Вам через 2 часа к ${doctor?.spec} в ${dayjs((<Appointment>appointment).date).format('HH:mm')}!`)
-        }
+          `${dayjs(notificationDate).format('DD/MM/YYYY HH:mm')} | Привет ${
+            user?.name
+          }! Напоминаем что вы записаны к ${doctor?.spec} завтра в ${dayjs(
+            (<Appointment>appointment).date
+          ).format('HH:mm')}!`
+        )
       }
+      notificationDate = dayjs((<Appointment>appointment).date)
+        .add(-2, 'hours')
+        .toDate()
+      if (notificationDate > new Date()) {
+        this.notificationService.addNotification(
+          notificationDate,
+          <User>user,
+          `${dayjs(notificationDate).format('DD/MM/YYYY HH:mm')} | Привет ${
+            user?.name
+          }! Вам через 2 часа к ${doctor?.spec} в ${dayjs((<Appointment>appointment).date).format(
+            'HH:mm'
+          )}!`
+        )
+      }
+    }
   }
 
   async addAppointment(id: string, appointment: IAppointment) {
     try {
-      const user:IUser | null = await this.storageService.addAppointment(id, (<Appointment>appointment).id)
- 
+      const user: IUser | null = await this.storageService.addAppointment(
+        id,
+        (<Appointment>appointment).id
+      )
+
       if (!user) {
         return { success: false, error: 'User not found' }
       }
@@ -152,7 +176,7 @@ class UserController {
   async deleteHandler(params: any) {
     const { id } = params
     try {
-      const dbResponce:IUser | null = await this.storageService.delete(id)
+      const dbResponce: IUser | null = await this.storageService.delete(id)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }
@@ -161,7 +185,6 @@ class UserController {
       return { success: false, error: error.message }
     }
   }
-
 }
 
 export default UserController

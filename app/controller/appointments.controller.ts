@@ -10,15 +10,15 @@ import { User } from '../model/user.model'
 const MAX_APPOINMETS_PER_DAY = 3
 
 interface controllerResponce {
-  success: boolean,
-  data?: Object,
+  success: boolean
+  data?: object
   error?: string
 }
 
 class AppointmentController {
-  storageService: IAppointmentDBService  
+  storageService: IAppointmentDBService
   constructor(storageService: IAppointmentDBService) {
-    this.storageService = storageService;
+    this.storageService = storageService
   }
 
   async createHandler(body: IAppointment) {
@@ -32,7 +32,7 @@ class AppointmentController {
         }
       }
       const appointmentsPerDay: number = await this.storageService.getCount(filter)
-      if (appointmentsPerDay >= MAX_APPOINMETS_PER_DAY ) {
+      if (appointmentsPerDay >= MAX_APPOINMETS_PER_DAY) {
         return { success: false, error: 'The doctor is too busy this day!' }
       }
       const user = new Appointment(body)
@@ -45,10 +45,13 @@ class AppointmentController {
 
   async getListHandler(query: object = {}) {
     try {
-      const dbResponce:IAppointment[] = await this.storageService.getList(query)
-      return { success: true, data: dbResponce.map((appointment) => {
-        return appointment
-      }) }
+      const dbResponce: IAppointment[] = await this.storageService.getList(query)
+      return {
+        success: true,
+        data: dbResponce.map((appointment) => {
+          return appointment
+        })
+      }
     } catch (error: any) {
       return { success: false, error: error.message ?? 'Unknown error' }
     }
@@ -57,7 +60,7 @@ class AppointmentController {
   async getHandler(params: any): Promise<controllerResponce> {
     const { id } = params
     try {
-      const dbResponce:IAppointment | null = await this.storageService.get(id)
+      const dbResponce: IAppointment | null = await this.storageService.get(id)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -71,7 +74,7 @@ class AppointmentController {
     const { id } = params
     const data = new Appointment(body)
     try {
-      const dbResponce:IAppointment | null = await this.storageService.update(id, data)
+      const dbResponce: IAppointment | null = await this.storageService.update(id, data)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -86,7 +89,7 @@ class AppointmentController {
     const input = { ...body }
 
     try {
-      const dbResponce:IAppointment | null = await this.storageService.update(id, input)
+      const dbResponce: IAppointment | null = await this.storageService.update(id, input)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -96,25 +99,33 @@ class AppointmentController {
     }
   }
 
-  async acceptAppointment(params: any, body: any) {
+  async acceptAppointment(params: any) {
     const { id } = params
     try {
       const result = await doctorController.getListHandler({ appointments_accepted: id })
-      if (result.success && (result.data?.length)) {
-        return { success: false, error: 'Appointment already accepted'}  
+      if (result.success && result.data?.length) {
+        return { success: false, error: 'Appointment already accepted' }
       }
-      const appointment:IAppointment | null = await this.storageService.get(id)
+      const appointment: IAppointment | null = await this.storageService.get(id)
       if (!appointment) {
         return { success: false, error: 'Appointment not found' }
       }
       if (appointment.doctor) {
-        await doctorController.addAppointment(appointment.doctor instanceof Doctor ? appointment.doctor.id : appointment.doctor, appointment)
+        await doctorController.addAppointment(
+          appointment.doctor instanceof Doctor ? appointment.doctor.id : appointment.doctor,
+          appointment
+        )
       }
       if (appointment.user) {
-        await userController.addAppointment(appointment.user instanceof User ? appointment.user.id : appointment.user, appointment)
+        await userController.addAppointment(
+          appointment.user instanceof User ? appointment.user.id : appointment.user,
+          appointment
+        )
       }
       if (+(appointment.date ?? 0) > +Date.now()) {
-        const dbResponce:IAppointment | null = await this.storageService.update(id, { active: true })
+        const dbResponce: IAppointment | null = await this.storageService.update(id, {
+          active: true
+        })
         return { success: true, data: dbResponce }
       }
       return { success: true, data: appointment }
@@ -123,14 +134,14 @@ class AppointmentController {
     }
   }
 
-  async rejectAppointment(params: any, body: any) {
+  async rejectAppointment(params: any) {
     const { id } = params
     try {
       const result = await doctorController.getListHandler({ appointments_accepted: id })
-      if (result.success && (result.data?.length)) {
-        return { success: false, error: 'Appointment already accepted'}  
+      if (result.success && result.data?.length) {
+        return { success: false, error: 'Appointment already accepted' }
       }
-      const dbResponce:controllerResponce = await this.deleteHandler({ id })
+      const dbResponce: controllerResponce = await this.deleteHandler({ id })
       return dbResponce
     } catch (error: any) {
       return { success: false, error: error.message }
@@ -140,7 +151,7 @@ class AppointmentController {
   async deleteHandler(params: any) {
     const { id } = params
     try {
-      const dbResponce:IAppointment | null = await this.storageService.delete(id)
+      const dbResponce: IAppointment | null = await this.storageService.delete(id)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -149,7 +160,6 @@ class AppointmentController {
       return { success: false, error: error.message }
     }
   }
-
 }
 
 export default AppointmentController

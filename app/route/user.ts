@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction }  from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import { validate as uuidValidate } from 'uuid'
 import validateSchema from '../middleware/validator'
 import { userSchema } from '../schema/user.schema'
@@ -6,11 +6,7 @@ import { userController } from '../dependency.root'
 
 import checkResponce from '../utils/checkresponce'
 
-const validate = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const validate = (req: Request, res: Response, next: NextFunction) => {
   const validateResult = validateSchema(req.body, userSchema)
   if (!validateResult.valid) {
     res.status(400)
@@ -20,11 +16,7 @@ const validate = (
   }
 }
 
-const validateUUID = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const validateUUID = (req: Request, res: Response, next: NextFunction) => {
   if (!uuidValidate(req.params?.id)) {
     res.status(400)
     res.json({ status: 'error', error: 'Invalid user id' })

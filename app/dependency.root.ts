@@ -22,28 +22,28 @@ export let appointmentController: AppointmentsController
 export const log: ILogger = new PinoLogger()
 
 export async function createDependencies(config: any) {
-    let databaseConnect: any
-    let userDBService: IUserDBService
-    let doctorDBService: IDoctorDBService
-    let appointmentDBService: IAppointmentDBService
+  let databaseConnect: any
+  let userDBService: IUserDBService
+  let doctorDBService: IDoctorDBService
+  let appointmentDBService: IAppointmentDBService
 
-    switch (config.storageService) {
-        case 'mongoose': {
-            databaseConnect = new MongooseConnect()
-            await databaseConnect.connect(config.mongoUri, config.databaseName)
-            userDBService = new UserMongooseService()
-            userController = new UserController(userDBService)
-            doctorDBService = new DoctorMongooseService()
-            doctorController = new DoctorController(doctorDBService)
-            appointmentDBService = new AppointmentMongooseService()
-            appointmentController = new AppointmentsController(appointmentDBService)
-            break
-        }
+  switch (config.storageService) {
+    case 'mongoose': {
+      databaseConnect = new MongooseConnect()
+      await databaseConnect.connect(config.mongoUri, config.databaseName)
+      userDBService = new UserMongooseService()
+      userController = new UserController(userDBService)
+      doctorDBService = new DoctorMongooseService()
+      doctorController = new DoctorController(doctorDBService)
+      appointmentDBService = new AppointmentMongooseService()
+      appointmentController = new AppointmentsController(appointmentDBService)
+      break
     }
+  }
 
-    if (config.notificationPath) {
-        const notification = new FSNotificationService(config.notificationPath)
-        userController.notificationService = notification
-        userController.createNotifications()
-    }
+  if (config.notificationPath) {
+    const notification = new FSNotificationService(config.notificationPath)
+    userController.notificationService = notification
+    userController.createNotifications()
+  }
 }

@@ -7,7 +7,7 @@ const userSchema = {
     photo_avatar: { type: 'string' },
     phone: { type: 'string' },
     name: { type: 'string' },
-    lastName: { type: 'string' },
+    lastName: { type: 'string' }
   },
   required: ['email', 'name'],
   additionalProperties: false

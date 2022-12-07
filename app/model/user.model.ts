@@ -11,25 +11,25 @@ export interface IUser {
   appointments?: Appointment[]
 }
 
-export class User implements IUser{
-  id: string = ''
-  email: string = ''
-  reg_token: string = ''
-  photo_avatar: string = ''
-  phone: string = ''
-  name: string = ''
-  type: string = 'user'
+export class User implements IUser {
+  id = ''
+  email = ''
+  reg_token = ''
+  photo_avatar = ''
+  phone = ''
+  name = ''
+  type = 'user'
   appointments: Appointment[] = []
-  
-  constructor (userData: IUser) {
-    const copyField = < T extends {} > (k: keyof T, target: T, source: T) => {
-      target[k] = source[k];
-    }    
+
+  constructor(userData: IUser) {
+    const copyField = <T extends object>(k: keyof T, target: T, source: T) => {
+      target[k] = source[k]
+    }
     for (const key in userData) {
-      const keyName = key as keyof IUser;
+      const keyName = key as keyof IUser
       if (keyName in this) {
         copyField(keyName, this, userData)
       }
     }
-   }
   }
+}
