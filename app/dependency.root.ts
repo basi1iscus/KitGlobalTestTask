@@ -30,7 +30,19 @@ export async function createDependencies(config: any) {
   switch (config.storageService) {
     case 'mongoose': {
       databaseConnect = new MongooseConnect()
-      await databaseConnect.connect(config.mongoUri, config.databaseName)
+      await databaseConnect.connect(config.mongoUri + '/' + config.databaseName)
+      userDBService = new UserMongooseService()
+      userController = new UserController(userDBService)
+      doctorDBService = new DoctorMongooseService()
+      doctorController = new DoctorController(doctorDBService)
+      appointmentDBService = new AppointmentMongooseService()
+      appointmentController = new AppointmentsController(appointmentDBService)
+      break
+    }
+    case 'mongodb-memory-server': {
+      const mongoServer = await (await import('mongodb-memory-server')).MongoMemoryServer.create()
+      databaseConnect = new MongooseConnect()
+      await databaseConnect.connect(mongoServer.getUri())
       userDBService = new UserMongooseService()
       userController = new UserController(userDBService)
       doctorDBService = new DoctorMongooseService()
