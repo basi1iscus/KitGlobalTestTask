@@ -4,7 +4,7 @@
 
 1. Clone this repo using:
   ```shell
-  $ git clone git@github.com:basi1iscus/testtask-auth-user-api.git
+  $ git clone git@github.com:basi1iscus/KitGlobalTestTask.git
   ```
 
 2. To install dependencies and clean the git repo run:
@@ -24,6 +24,11 @@
 
   ```shell
   $ yarn start
+  ```
+  or
+
+  ```shell
+  $ npm run dev
   ```
 
 ## API
