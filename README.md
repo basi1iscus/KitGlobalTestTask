@@ -111,3 +111,10 @@ Installs the dependencies.
 ```Shell
 yarn run test
 ```
+#### Docker
+Node server working on 8090 ports on localhost
+
+```run
+docker-compose -f ./docker-compose.yml up (Options: --build for build, -d to detach )
+docker-compose -f ./docker-compose.yml down (To stop contaiters)
+```
