@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  node:
+    build:
+      target: nodeServer
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8090:8090
+  mongo:
+    image: mongo
+    depends_on:
+      - node

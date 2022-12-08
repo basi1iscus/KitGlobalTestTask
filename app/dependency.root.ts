@@ -30,7 +30,9 @@ export async function createDependencies(config: any) {
   switch (config.storageService) {
     case 'mongoose': {
       databaseConnect = new MongooseConnect()
-      await databaseConnect.connect(config.mongoUri + '/' + config.databaseName)
+      const mongoUri = config.mongoUri ?? 'mongodb://127.0.0.1:27017'
+      const databaseName = config.databaseName ?? 'kitglobaltesttask'
+      await databaseConnect.connect(mongoUri + '/' + databaseName)
       userDBService = new UserMongooseService()
       userController = new UserController(userDBService)
       doctorDBService = new DoctorMongooseService()
