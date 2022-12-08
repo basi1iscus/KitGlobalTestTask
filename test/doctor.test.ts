@@ -10,7 +10,7 @@ const testInputData = {
   spec: 'infectologist'
 }
 
-const expectedUser = {
+const expectedDoctor = {
   id: expect.any(String),
   email: 'doctor.house@testmail.com',
   reg_token: '',
@@ -22,9 +22,10 @@ const expectedUser = {
   type: 'doc',
   appointments_accepted: []
 }
+
 const expectedData = {
   success: true,
-  data: expectedUser
+  data: expectedDoctor
 }
 
 config.storageService = 'mongodb-memory-server'
@@ -51,7 +52,7 @@ describe('Test Users API', () => {
 
       expect(body).toMatchObject({ ...expectedData, data: { id: expect.any(String) } })
       doctorId = body.data.id
-      expectedUser.id = doctorId
+      expectedDoctor.id = doctorId
     })
     test('should return a 400 incorrect input data', async () => {
       const testData: any = { ...testInputData }
@@ -68,7 +69,7 @@ describe('Test Users API', () => {
 
       expect(statusCode).toBe(200)
 
-      expect(body).toMatchObject({ ...expectedData, data: [expectedUser] })
+      expect(body).toMatchObject({ ...expectedData, data: [expectedDoctor] })
     })
     test('should return 200 and get doctor', async () => {
       const { statusCode, body } = await supertest(app).get(`/api/v1/doctor/${doctorId}`)
@@ -76,7 +77,7 @@ describe('Test Users API', () => {
       expect(statusCode).toBe(200)
       expect(body).toEqual(expectedData)
     })
-    test('should return 400 incorrect doctor', async () => {
+    test('should return 400 incorrect doctorId', async () => {
       const { statusCode } = await supertest(app).get(`/api/v1/doctor/${'000000000000'}`)
 
       expect(statusCode).toBe(400)

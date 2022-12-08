@@ -67,10 +67,4 @@ router.post('/:id/:command', [validateId, validateCommand], async (req: Request,
   res.json(result)
 })
 
-router.delete('/:id', [validateId], async (req: Request, res: Response) => {
-  const result = await appointmentController.deleteHandler(req.params)
-  res.status(checkResponce(result))
-  res.json(result)
-})
-
 export default router

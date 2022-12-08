@@ -3,7 +3,6 @@ import { IAppointment, Appointment } from '../../model/appointment.model'
 import { IAppointmentDBService } from '../../interface/appointment.interface'
 
 const AppointmentSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId, alias: 'id' },
   date: {
     type: Date,
     required: true
