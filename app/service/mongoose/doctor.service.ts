@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { v4 } from 'uuid'
-import { IDoctor, Doctor } from '../../model/doctor.model'
+import { Doctor } from '../../model/doctor.model'
 import { IDoctorDBService } from '../../interface/doctor.interface'
 
 const DoctorSchema = new mongoose.Schema({
@@ -29,7 +29,7 @@ const DoctorSchema = new mongoose.Schema({
 class DoctorMongodbService implements IDoctorDBService {
   DoctorModel = mongoose.model('Doctors', DoctorSchema)
 
-  async create(DoctorData: Doctor): Promise<IDoctor> {
+  async create(DoctorData: Doctor): Promise<Partial<Doctor>> {
     try {
       const doctor = await this.DoctorModel.create(DoctorData)
       return { id: doctor._id.toString() }
@@ -55,7 +55,7 @@ class DoctorMongodbService implements IDoctorDBService {
       })
   }
 
-  async findWithFilter(filter: IDoctor): Promise<Doctor | null> {
+  async findWithFilter(filter: Partial<Doctor>): Promise<Doctor | null> {
     return this.DoctorModel.findOne(filter)
       .then((data) => (data ? new Doctor(data.toJSON({ virtuals: true })) : null))
       .catch((error) => {
@@ -63,7 +63,7 @@ class DoctorMongodbService implements IDoctorDBService {
       })
   }
 
-  async update(id: string, data: IDoctor): Promise<Doctor | null> {
+  async update(id: string, data: Partial<Doctor>): Promise<Doctor | null> {
     return this.DoctorModel.findByIdAndUpdate(id, data, {
       returnDocument: 'after'
     })

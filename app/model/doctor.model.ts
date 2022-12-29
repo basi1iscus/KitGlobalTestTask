@@ -1,19 +1,5 @@
 import { Appointment } from './appointment.model'
-
-export interface IDoctor {
-  id?: string
-  email?: string
-  reg_token?: string
-  photo_avatar?: string
-  phone?: string
-  name?: string
-  type?: string
-  spec?: string
-  free?: boolean
-  appointments_accepted?: Appointment[]
-}
-
-export class Doctor implements IDoctor {
+export class Doctor {
   id = ''
   email = ''
   reg_token = ''
@@ -25,12 +11,12 @@ export class Doctor implements IDoctor {
   free = true
   appointments_accepted: Appointment[] = []
 
-  constructor(doctorData: IDoctor) {
+  constructor(doctorData: Partial<Doctor>) {
     const copyField = <T extends object>(k: keyof T, target: T, source: T) => {
       target[k] = source[k]
     }
     for (const key in doctorData) {
-      const keyName = key as keyof IDoctor
+      const keyName = key as keyof Doctor
       if (keyName in this) {
         copyField(keyName, this, doctorData)
       }

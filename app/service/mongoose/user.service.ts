@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { v4 } from 'uuid'
-import { IUser, User } from '../../model/user.model'
+import { User } from '../../model/user.model'
 import { IUserDBService } from '../../interface/user.interface'
 
 const UserSchema = new mongoose.Schema({
@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
 class UserMongodbService implements IUserDBService {
   UserModel = mongoose.model('Users', UserSchema)
 
-  async create(userData: User): Promise<IUser> {
+  async create(userData: User): Promise<Partial<User>> {
     try {
       const user = await this.UserModel.create(userData)
       return { id: user._id.toString() }
@@ -53,7 +53,7 @@ class UserMongodbService implements IUserDBService {
       })
   }
 
-  async findWithFilter(filter: IUser): Promise<User | null> {
+  async findWithFilter(filter: Partial<User>): Promise<User | null> {
     return this.UserModel.findOne(filter)
       .then((data) => (data ? new User(data.toJSON({ virtuals: true })) : null))
       .catch((error) => {
@@ -61,7 +61,7 @@ class UserMongodbService implements IUserDBService {
       })
   }
 
-  async update(userID: string, userData: IUser): Promise<User | null> {
+  async update(userID: string, userData: Partial<User>): Promise<User | null> {
     return this.UserModel.findByIdAndUpdate(userID, userData, {
       returnDocument: 'after'
     })

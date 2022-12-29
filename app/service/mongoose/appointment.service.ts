@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { IAppointment, Appointment } from '../../model/appointment.model'
+import { Appointment } from '../../model/appointment.model'
 import { IAppointmentDBService } from '../../interface/appointment.interface'
 
 const AppointmentSchema = new mongoose.Schema({
@@ -15,7 +15,7 @@ const AppointmentSchema = new mongoose.Schema({
 class AppointmentMongodbService implements IAppointmentDBService {
   AppointmentModel = mongoose.model('Appointments', AppointmentSchema)
 
-  async create(appointmentsData: Appointment): Promise<IAppointment> {
+  async create(appointmentsData: Appointment): Promise<Partial<Appointment>> {
     try {
       const Appointment = await this.AppointmentModel.create(appointmentsData)
       return { id: Appointment._id.toString() }
@@ -52,7 +52,7 @@ class AppointmentMongodbService implements IAppointmentDBService {
       })
   }
 
-  async findWithFilter(filter: IAppointment): Promise<Appointment | null> {
+  async findWithFilter(filter: Partial<Appointment>): Promise<Appointment | null> {
     return this.AppointmentModel.findOne(filter)
       .then((data) => (data ? new Appointment(data.toJSON({ virtuals: true })) : null))
       .catch((error) => {
@@ -60,7 +60,7 @@ class AppointmentMongodbService implements IAppointmentDBService {
       })
   }
 
-  async update(id: string, data: IAppointment): Promise<Appointment | null> {
+  async update(id: string, data: Partial<Appointment>): Promise<Appointment | null> {
     return this.AppointmentModel.findByIdAndUpdate(id, data, { returnDocument: 'after' })
       .then((data) => (data ? new Appointment(data.toJSON({ virtuals: true })) : null))
       .catch((error) => {

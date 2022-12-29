@@ -1,10 +1,10 @@
 import dayjs from 'dayjs'
 
-import { IUser, User } from '../model/user.model'
-import { IAppointment, Appointment } from '../model/appointment.model'
+import { User } from '../model/user.model'
+import { Appointment } from '../model/appointment.model'
 import { IUserDBService } from '../interface/user.interface'
 import { INotificationService } from '../interface/notification.interface'
-import { IDoctor } from '../model/doctor.model'
+import { Doctor } from '../model/doctor.model'
 import { appointmentController } from '../dependency.root'
 import { doctorController } from '../dependency.root'
 
@@ -21,7 +21,7 @@ class UserController {
     this.storageService = storageService
   }
 
-  async createHandler(body: IUser) {
+  async createHandler(body: Partial<User>) {
     try {
       const user = new User(body)
       const dbResponce = await this.storageService.create(user)
@@ -53,7 +53,7 @@ class UserController {
 
   async getListHandler(query: object = {}) {
     try {
-      const dbResponce: IUser[] = await this.storageService.getList(query)
+      const dbResponce: Partial<User>[] = await this.storageService.getList(query)
       return {
         success: true,
         data: dbResponce.map((user) => {
@@ -68,7 +68,7 @@ class UserController {
   async getHandler(params: any): Promise<controllerResponce> {
     const { id } = params
     try {
-      const dbResponce: IUser | null = await this.storageService.get(id)
+      const dbResponce: User | null = await this.storageService.get(id)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }
@@ -78,11 +78,11 @@ class UserController {
     }
   }
 
-  async updateHandler(params: any, body: IUser) {
+  async updateHandler(params: any, body: Partial<User>) {
     const { id } = params
     const userData = new User(body)
     try {
-      const dbResponce: IUser | null = await this.storageService.update(id, userData)
+      const dbResponce: User | null = await this.storageService.update(id, userData)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }
@@ -97,7 +97,7 @@ class UserController {
     const input = { ...body }
 
     try {
-      const dbResponce: IUser | null = await this.storageService.update(id, input)
+      const dbResponce: User | null = await this.storageService.update(id, input)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }
@@ -108,16 +108,16 @@ class UserController {
   }
 
   async createNotificationForAppointment(
-    appointment: IAppointment,
-    userParam?: IUser,
-    doctorParam?: IDoctor
+    appointment: Partial<Appointment>,
+    userParam?: Partial<User>,
+    doctorParam?: Doctor
   ): Promise<void> {
     if (this.notificationService) {
-      let user: IUser | undefined = userParam
-      let doctor: IDoctor | undefined = doctorParam
+      let user: Partial<User> | undefined = userParam
+      let doctor: Doctor | undefined = doctorParam
 
       if (!doctor) {
-        doctor = (await doctorController.getHandler({ id: appointment.doctor })).data
+        doctor = <Doctor>(await doctorController.getHandler({ id: appointment.doctor })).data
       }
       if (!user) {
         user = (await this.getHandler({ id: appointment.user })).data
@@ -154,9 +154,9 @@ class UserController {
     }
   }
 
-  async addAppointment(id: string, appointment: IAppointment) {
+  async addAppointment(id: string, appointment: Partial<Appointment>) {
     try {
-      const user: IUser | null = await this.storageService.addAppointment(
+      const user: Partial<User> | null = await this.storageService.addAppointment(
         id,
         (<Appointment>appointment).id
       )
@@ -176,7 +176,7 @@ class UserController {
   async deleteHandler(params: any) {
     const { id } = params
     try {
-      const dbResponce: IUser | null = await this.storageService.delete(id)
+      const dbResponce: User | null = await this.storageService.delete(id)
       if (!dbResponce) {
         return { success: false, error: 'User not found' }
       }

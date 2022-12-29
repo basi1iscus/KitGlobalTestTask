@@ -1,10 +1,10 @@
-import { IDoctor, Doctor } from '../model/doctor.model'
+import { Doctor } from '../model/doctor.model'
 import { IDoctorDBService } from '../interface/doctor.interface'
-import { IAppointment } from '../model/appointment.model'
+import { Appointment } from '../model/appointment.model'
 
 interface controllerResponce {
   success: boolean
-  data?: object
+  data?: Partial<Doctor>
   error?: string
 }
 
@@ -14,7 +14,7 @@ class DoctorController {
     this.storageService = storageService
   }
 
-  async createHandler(body: IDoctor) {
+  async createHandler(body: Partial<Doctor>) {
     try {
       const doctor = new Doctor(body)
       const dbResponce = await this.storageService.create(doctor)
@@ -26,7 +26,7 @@ class DoctorController {
 
   async getListHandler(query: object = {}) {
     try {
-      const dbResponce: IDoctor[] = await this.storageService.getList(query)
+      const dbResponce: Doctor[] = await this.storageService.getList(query)
       return {
         success: true,
         data: dbResponce.map((doctor) => {
@@ -41,7 +41,7 @@ class DoctorController {
   async getHandler(params: any): Promise<controllerResponce> {
     const { id } = params
     try {
-      const dbResponce: IDoctor | null = await this.storageService.get(id)
+      const dbResponce: Doctor | null = await this.storageService.get(id)
       if (!dbResponce) {
         return { success: false, error: 'Doctor not found' }
       }
@@ -51,11 +51,11 @@ class DoctorController {
     }
   }
 
-  async updateHandler(params: any, body: IDoctor) {
+  async updateHandler(params: any, body: Partial<Doctor>) {
     const { id } = params
     const userData = new Doctor(body)
     try {
-      const dbResponce: IDoctor | null = await this.storageService.update(id, userData)
+      const dbResponce: Doctor | null = await this.storageService.update(id, userData)
       if (!dbResponce) {
         return { success: false, error: 'Doctor not found' }
       }
@@ -70,7 +70,7 @@ class DoctorController {
     const input = { ...body }
 
     try {
-      const dbResponce: IDoctor | null = await this.storageService.update(id, input)
+      const dbResponce: Doctor | null = await this.storageService.update(id, input)
       if (!dbResponce) {
         return { success: false, error: 'Doctor not found' }
       }
@@ -80,15 +80,12 @@ class DoctorController {
     }
   }
 
-  async addAppointment(id: string, appointment: IAppointment) {
+  async addAppointment(id: string, appointment: Appointment) {
     try {
       if (!appointment.id) {
         return { success: false, error: 'Appointment with empty id' }
       }
-      const dbResponce: IDoctor | null = await this.storageService.addAppointment(
-        id,
-        appointment.id
-      )
+      const dbResponce: Doctor | null = await this.storageService.addAppointment(id, appointment.id)
       if (!dbResponce) {
         return { success: false, error: 'Doctor not found' }
       }
@@ -101,7 +98,7 @@ class DoctorController {
   async deleteHandler(params: any) {
     const { id } = params
     try {
-      const dbResponce: IDoctor | null = await this.storageService.delete(id)
+      const dbResponce: Doctor | null = await this.storageService.delete(id)
       if (!dbResponce) {
         return { success: false, error: 'Doctor not found' }
       }

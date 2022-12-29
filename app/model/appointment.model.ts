@@ -1,27 +1,19 @@
 import { User } from './user.model'
 import { Doctor } from './doctor.model'
 
-export interface IAppointment {
-  id?: string
-  date?: Date
-  user?: string | User
-  doctor?: string | Doctor
-  active?: boolean
-}
-
-export class Appointment implements IAppointment {
+export class Appointment {
   id = ''
   date: Date = new Date()
   user: string | User = ''
   doctor: string | Doctor = ''
   active = false
 
-  constructor(appointmentData: IAppointment) {
+  constructor(appointmentData: Partial<Appointment>) {
     const copyField = <T extends object>(k: keyof T, target: T, source: T) => {
       target[k] = source[k]
     }
     for (const key in appointmentData) {
-      const keyName = key as keyof IAppointment
+      const keyName = key as keyof Appointment
       if (keyName in this) {
         copyField(keyName, this, appointmentData)
       }

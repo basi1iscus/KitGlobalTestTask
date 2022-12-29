@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 
-import { IAppointment, Appointment } from '../model/appointment.model'
+import { Appointment } from '../model/appointment.model'
 import { IAppointmentDBService } from '../interface/appointment.interface'
 import { doctorController } from '../dependency.root'
 import { userController } from '../dependency.root'
@@ -21,7 +21,7 @@ class AppointmentController {
     this.storageService = storageService
   }
 
-  async createHandler(body: IAppointment) {
+  async createHandler(body: Partial<Appointment>) {
     try {
       const filter: object = {
         doctor: body.doctor,
@@ -45,7 +45,7 @@ class AppointmentController {
 
   async getListHandler(query: object = {}) {
     try {
-      const dbResponce: IAppointment[] = await this.storageService.getList(query)
+      const dbResponce: Appointment[] = await this.storageService.getList(query)
       return {
         success: true,
         data: dbResponce.map((appointment) => {
@@ -60,7 +60,7 @@ class AppointmentController {
   async getHandler(params: any): Promise<controllerResponce> {
     const { id } = params
     try {
-      const dbResponce: IAppointment | null = await this.storageService.get(id)
+      const dbResponce: Appointment | null = await this.storageService.get(id)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -70,11 +70,11 @@ class AppointmentController {
     }
   }
 
-  async updateHandler(params: any, body: IAppointment) {
+  async updateHandler(params: any, body: Partial<Appointment>) {
     const { id } = params
     const data = new Appointment(body)
     try {
-      const dbResponce: IAppointment | null = await this.storageService.update(id, data)
+      const dbResponce: Appointment | null = await this.storageService.update(id, data)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -89,7 +89,7 @@ class AppointmentController {
     const input = { ...body }
 
     try {
-      const dbResponce: IAppointment | null = await this.storageService.update(id, input)
+      const dbResponce: Appointment | null = await this.storageService.update(id, input)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -106,7 +106,7 @@ class AppointmentController {
       if (result.success && result.data?.length) {
         return { success: false, error: 'Appointment already accepted' }
       }
-      const appointment: IAppointment | null = await this.storageService.get(id)
+      const appointment: Appointment | null = await this.storageService.get(id)
       if (!appointment) {
         return { success: false, error: 'Appointment not found' }
       }
@@ -123,7 +123,7 @@ class AppointmentController {
         )
       }
       if (+(appointment.date ?? 0) > +Date.now()) {
-        const dbResponce: IAppointment | null = await this.storageService.update(id, {
+        const dbResponce: Appointment | null = await this.storageService.update(id, {
           active: true
         })
         return { success: true, data: dbResponce }
@@ -151,7 +151,7 @@ class AppointmentController {
   async deleteHandler(params: any) {
     const { id } = params
     try {
-      const dbResponce: IAppointment | null = await this.storageService.delete(id)
+      const dbResponce: Appointment | null = await this.storageService.delete(id)
       if (!dbResponce) {
         return { success: false, error: 'Appointment not found' }
       }
